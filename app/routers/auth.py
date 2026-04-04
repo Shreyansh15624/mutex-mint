@@ -6,7 +6,7 @@ from app.services import user_service
 from fastapi.security import OAuth2PasswordRequestForm
 from app.security import jwt_handler
 from datetime import timedelta
-from app.security.dependencies import get_current_user, get_current_user_stateless
+from app.security.dependencies import get_current_user_stateless
 
 # Starting the Router Instance
 router = APIRouter(

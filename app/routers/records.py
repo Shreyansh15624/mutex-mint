@@ -47,7 +47,7 @@ def update_record(
     id: int,
     update_record: schemas.RecordCreate,
     db: Session = Depends(get_db),
-    current_user: models.User = Depends(RoleChecker({"Admin"}),)
+    current_user: models.User = Depends(RoleChecker({"Admin"}))
 ):
     # 1. Finding the specific record
     record_query = db.query(models.Record).filter(models.Record.id == id)
