@@ -11,6 +11,8 @@ Managing financial data requires a backend architecture that is not only logical
 
 I engineered a clean, multi-layered architecture that strictly separates API routing, security middleware, business logic, and database operations. Recognizing the vulnerabilities inherent in cryptographic algorithms, I implemented a strict Pydantic validation gateway to prevent `bcrypt` DoS attacks by capping payload sizes at the network perimeter. Furthermore, to ensure high-speed read operations across the API, I designed an O(1) stateless JWT dependency. This bypasses expensive database lookups by validating users via cryptographic signatures, demonstrating my ability to build highly scalable, defensive, and production-ready backend systems.
 
+> Make sure to take a look at the documentation after starting the app at this link: [Documentation](http://127.0.0.1:8000/redoc)
+
 ## Motivation
 
 This project was built as a comprehensive backend assessment for Zorvyn FinTech. My primary motivation was to go beyond basic CRUD operations and demonstrate a senior-level understanding of system design tradeoffs, resource management, and clean coding principles. 
