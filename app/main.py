@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from app import models
 from app.database import engine
-from app.routers import auth, records
+from app.routers import auth, records, analytics
 
 # 1. The Spark: This is the inception of the 'zorvyn.db' file by building
 # all the tables based of the 'models.py' file
@@ -17,6 +17,7 @@ app = FastAPI(
 # 3. Plugging the Routers into the Application
 app.include_router(auth.router)
 app.include_router(records.router)
+app.include_router(analytics.router)
 
 # 4. A quick health check route to check how the server is doing
 @app.get("/")
