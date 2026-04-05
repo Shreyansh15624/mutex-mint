@@ -9,8 +9,8 @@ models.Base.metadata.create_all(bind=engine)
 
 # 2. The Engine: Initializing the FastAPI Application
 app = FastAPI(
-    title="Zorvyn Finance API",
-    description="Backend screening assessment for Zorvyn FinTech",
+    title="Fintech Ledger API",
+    description="Backend Screening Assessment",
     version="1.0.0",
 )
 
@@ -23,4 +23,4 @@ app.include_router(analytics.router)
 # 4. A quick health check route to check how the server is doing
 @app.get("/")
 def read_root():
-    return {"status": "Zorvyn API Vault is Online & Healthy!"}
+    return {"status": "Fintech API Vault is Online & Healthy!"}
