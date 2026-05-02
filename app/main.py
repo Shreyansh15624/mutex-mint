@@ -3,8 +3,8 @@ from app import models
 from app.database import engine
 from app.routers import auth, records, analytics, users
 
-# 1. The Spark: This is the inception of the 'zorvyn.db' file by building
-# all the tables based of the 'models.py' file
+# 1. The Spark: This automatically generates our schema (Users, Records, etc.)
+# right inside the postgresql container on startup.
 models.Base.metadata.create_all(bind=engine)
 
 # 2. Documentation: Defining the new Documentation Metadata for our Tags
@@ -30,8 +30,8 @@ tags_metadata = [
 # 3. The Engine: Initializing the FastAPI Application
 app = FastAPI(
     title="Fintech Ledger API",
-    description="Backend Screening Assessment",
-    version="1.0.0",
+    description="A simple concurrent Fintech Records Manager with PostgreSQL",
+    version="1.1.0",
     openapi_tags=tags_metadata,
 )
 

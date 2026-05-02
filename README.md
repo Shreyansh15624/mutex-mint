@@ -13,9 +13,9 @@ Managing financial data requires a backend architecture that is logically sound 
 I engineered a clean, multi-layered architecture that strictly separates API routing, security middleware, business logic, and database operations. Recognizing vulnerabilities in cryptographic algorithms, I implemented a strict Pydantic validation gateway to prevent `bcrypt` DoS attacks by capping payload sizes at the network perimeter. Furthermore, to ensure high-speed read operations across the API, I designed an O(1) stateless JWT dependency, which bypasses expensive database lookups by validating users via cryptographic signatures.
 
 <br>
-<p align="center">
-  <img src="./architecture.png" alt="Project Architecture Overview" width="85%">
-</p>
+    <p align="center">
+        <img src="./architecture.png" alt="Project Architecture Overview" width="85%">
+    </p>
 <br>
 
 ### 📊 Advanced Data Operations

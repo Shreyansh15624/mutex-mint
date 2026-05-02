@@ -1,13 +1,21 @@
+import os
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
 
-# Linking to the local SQLite file named as zorvyn.db
-SQLALCHEMY_DATABASE_URL = "sqlite:///./zorvyn.db"
+from dotenv import load_dotenv
 
+# 1. Loading the secrets from the '.env' file into the system environment!
+load_dotenv()
 
-engine = create_engine(
-    SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
-) # 'check_same_thread=False' is strictly required for SQLite to work with FastAPI's async routing
+# 2. Fetching the secure URL dynamically
+SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL")
+
+# A failsafe to prevent the app from booting at all if the '.env' file is missing
+if not SQLALCHEMY_DATABASE_URL:
+    raise ValueError("⚠️CRITICAL: DATABASE_URL Environment Variable is Missing!")
+
+engine = create_engine(SQLALCHEMY_DATABASE_URL)
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
