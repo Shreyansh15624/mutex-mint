@@ -1,19 +1,30 @@
-# Environments
-.venv/
-env/
+# -----------------------------
+# Environments & Secrets
+# -----------------------------
 .env
-.env.*
-!.env.example
+.venv/
+venv/
+env/
 
-# Python Cache
+# -----------------------------
+# Python & Pytest Caches
+# -----------------------------
 __pycache__/
-*.pyc
+*.py[cod]
+*$py.class
+.pytest_cache/
 
-# Database
-*.sqlite3
-*.db
+# -----------------------------
+# Database Volumes & Artifacts
+# -----------------------------
 postgres_data/
 test_ledger.db
+*.db
+*.sqlite3
 
-# IDEs
+# -----------------------------
+# OS & Editor Files
+# -----------------------------
+.DS_Store
 .vscode/
+.idea/
