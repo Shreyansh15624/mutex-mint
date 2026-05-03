@@ -44,7 +44,7 @@ case "$1" in
     up)
         check_env
         echo -e "${GREEN}Spinnig up the database infrastructure...${NC}"
-        sudo docker compose --env-file .env up -d
+        sudo docker compose --env-file .env up -d db
 
         wait_for_postgres
 
@@ -55,7 +55,7 @@ case "$1" in
     test)
         check_env
         echo -e "${YELLOW}Preparing Isolated Test Environment...${NC}"
-        sudo docker compose --env-file .env up -d
+        sudo docker compose --env-file .env up -d test_db
 
         wait_for_postgres
 
