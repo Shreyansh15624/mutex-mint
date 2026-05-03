@@ -13,6 +13,7 @@ __pycache__/
 *.sqlite3
 *.db
 postgres_data/
+test_ledger.db
 
 # IDEs
 .vscode/

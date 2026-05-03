@@ -5,10 +5,7 @@ from app import models, schemas
 from app.database import get_db
 from app.security.dependencies import RoleChecker
 
-router = APIRouter(
-    prefix="/api/v1/records",
-    tags=["Financial Records"],
-)
+router = APIRouter()
 
 # 1. CREATE RECORD (strictly locked to 'Admin' role)
 @router.post("/", response_model=schemas.RecordResponse, status_code=status.HTTP_201_CREATED)

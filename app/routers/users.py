@@ -5,10 +5,7 @@ from app import models, schemas
 from app.database import get_db
 from app.security.dependencies import RoleChecker
 
-router = APIRouter(
-    prefix="/api/v1/users",
-    tags=["User Management"],
-)
+router = APIRouter()
 
 # ADMIN: View all Users
 @router.get("/", response_model=List[schemas.UserResponse])

@@ -5,10 +5,7 @@ from app import models
 from app.database import get_db
 from app.security.dependencies import RoleChecker
 
-router = APIRouter(
-    prefix="/api/v1/analytics",
-    tags=["Analytics Dashboard"],
-)
+router = APIRouter()
 
 # SUMMARY ENDPOINT (Locked to Admin & Analyst Roles)
 @router.get("/summary")

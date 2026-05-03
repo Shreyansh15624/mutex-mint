@@ -1,4 +1,5 @@
 services:
+  # The Primary Database!
   db:
     image: postgres:15-alpine
     container_name: ledger_postgres
@@ -11,3 +12,15 @@ services:
       - "5432:5432"
     volumes:
       - ./postgres_data:/var/lib/postgresql/data
+  
+  # Dedicated Testing Database
+  test_db:
+    image: postgres:15-alpine
+    container_name: ledger_postgres_test
+    # Not using a Volume in here to maintain Blazing Fast Speeds
+    environment:
+      POSTGRES_USER: ledger_admin
+      POSTGRES_PASSWORD: abc123
+      POSTGRES_DB: fintech_ledger_test
+    ports:
+    - "5433:5432"

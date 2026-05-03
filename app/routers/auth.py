@@ -9,11 +9,7 @@ from datetime import timedelta
 from app.security.dependencies import get_current_user_stateless
 
 # Starting the Router Instance
-router = APIRouter(
-    prefix="/api/v1/auth",
-    tags=["Authentication"],
-)
-
+router = APIRouter()
 
 @router.post("/register", response_model=schemas.UserResponse, status_code=status.HTTP_201_CREATED)
 def register(user: schemas.UserCreate, db: Session = Depends(get_db)):

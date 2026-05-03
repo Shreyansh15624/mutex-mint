@@ -1,3 +1,4 @@
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from app import models
 from app.database import engine
@@ -5,7 +6,10 @@ from app.routers import auth, records, analytics, users
 
 # 1. The Spark: This automatically generates our schema (Users, Records, etc.)
 # right inside the postgresql container on startup.
-models.Base.metadata.create_all(bind=engine)
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    models.Base.metadata.create_all(bind=engine)
+    yield
 
 # 2. Documentation: Defining the new Documentation Metadata for our Tags
 tags_metadata = [
@@ -33,13 +37,14 @@ app = FastAPI(
     description="A simple concurrent Fintech Records Manager with PostgreSQL",
     version="1.1.0",
     openapi_tags=tags_metadata,
+    lifespan=lifespan,
 )
 
 # 4. Plugging the Routers into the Application
-app.include_router(auth.router)
-app.include_router(users.router)
-app.include_router(records.router)
-app.include_router(analytics.router)
+app.include_router(auth.router, prefix="/api/v1/auth", tags=["Authentication"])
+app.include_router(users.router, prefix="/api/v1/users", tags=["User Management"])
+app.include_router(records.router, prefix="/api/v1/records", tags=["Financial Records"])
+app.include_router(analytics.router, prefix="/api/v1/analytics", tags=["Anaytics Dashboard"])
 
 # 5. A quick health check route to check how the server is doing
 @app.get("/")
