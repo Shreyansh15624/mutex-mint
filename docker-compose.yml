@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   # The Primary Database!
   db:
@@ -24,3 +26,16 @@ services:
       POSTGRES_DB: fintech_ledger_test
     ports:
     - "5433:5432"
+  
+  ledger_redis:
+    image: redis:7-alpine
+    container_name: ledger_redis
+    ports:
+      - "6379:6379"
+    command: redis-server --save 60 1 --loglevel warning
+    networks:
+      - default
+  
+networks:
+  default:
+    driver: bridge
