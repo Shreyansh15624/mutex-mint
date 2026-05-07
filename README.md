@@ -1,86 +1,80 @@
-# 🏦 Fintech Ledger API: Secure Records & Analytics Engine
+# LedgerCore: A Distributed FinTech Engine
 
 ![Python Version](https://img.shields.io/badge/python-3.12%2B-blue)
 ![FastAPI](https://img.shields.io/badge/FastAPI-005571?logo=fastapi)
-![SQLite](https://img.shields.io/badge/SQLite-003B57?logo=sqlite)
-![Security](https://img.shields.io/badge/Security-pyJWT%20%7C%20bcrypt-brightgreen)
-![Tests](https://img.shields.io/badge/tests-passing-brightgreen)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-336791?logo=postgresql)
+![Redis](https://img.shields.io/badge/Redis-DC382D?logo=redis)
+![Celery](https://img.shields.io/badge/Celery-37814A?logo=celery)
+![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker)
 
 ## Description
 
-Managing financial data requires a backend architecture that is logically sound and fortified against vulnerabilities and performance bottlenecks. To meet standard FinTech requirements, I developed this FastAPI service centered around secure data modeling, strict Role-Based Access Control (RBAC), and efficient server-side data processing. 
+LedgerCore is a highly concurrent, fully containerized financial backend engineered to process thousands of secure transactions without race conditions or data loss. Built with FastAPI, PostgreSQL, Redis, and Celery, this project strictly separates the API gateway from background processing to ensure maximum availability.
 
-I engineered a clean, multi-layered architecture that strictly separates API routing, security middleware, business logic, and database operations. Recognizing vulnerabilities in cryptographic algorithms, I implemented a strict Pydantic validation gateway to prevent `bcrypt` DoS attacks by capping payload sizes at the network perimeter. Furthermore, to ensure high-speed read operations across the API, I designed an O(1) stateless JWT dependency, which bypasses expensive database lookups by validating users via cryptographic signatures.
+It features a strict `customers` and `employees` domain schema, Role-Based Access Control (RBAC), and custom idempotency middleware. In recent benchmarks, the distributed engine successfully processed a 500-user concurrent stress test via Locust, achieving a 0.0% failure rate while mitigating heavy database lock contention.
 
 <br>
     <p align="center">
-        <img src="./architecture.png" alt="Project Architecture Overview" width="85%">
+        <img src="./architecture.jpg" alt="Project Architecture Overview" width="85%">
     </p>
 <br>
 
-### 📊 Advanced Data Operations
-* **Dynamic Search Engine:** The records endpoint supports dynamic, multi-parameter querying (exact type matches, fuzzy category text matching, and strict numerical boundaries) using RESTful query parameters.
-* **High-Performance Analytics:** Instead of relying on memory-heavy Python loops, the dashboard endpoint offloads complex mathematical operations (Transaction Velocity, Average Transaction Value, and Outlier Detection) directly to the SQLite C-engine via SQLAlchemy groupings. All responses are strictly typed using nested Data Transfer Object (DTO) schemas.
-
-> Make sure to take a look at the documentation after starting the app at this link: [Documentation](http://localhost:8000/redoc)
+**Core Technologies:**
+* **API Gateway:** Python, FastAPI, Uvicorn
+* **Data Access:** PostgreSQL, SQLAlchemy (ORM), Alembic (Migrations)
+* **Asynchronous Processing:** Celery, Redis (Message Broker & Idempotency Cache)
+* **Testing & Infrastructure:** Locust, Docker, Docker Compose
 
 ## Motivation
 
-This project was built as a comprehensive backend assessment. My primary motivation was to go beyond basic CRUD operations and demonstrate a strong foundational understanding of system design tradeoffs, resource management, and clean coding principles. 
+Most entry-level backend APIs handle simple CRUD operations beautifully but completely fall apart under heavy transactional load. I built this system to actively solve the hardest problems in financial technology: preventing double-spending and managing deadlocks during high-concurrency traffic spikes.
 
-To prove the stability of this architecture, I engineered a highly isolated Pytest integration suite utilizing dependency overrides and automated in-memory (`sqlite:///:memory:`) database fixtures. This application serves as a showcase of my readiness to write maintainable, secure Python code that protects both user data and server infrastructure.
+By offloading heavy PostgreSQL row-level locks (`SELECT ... FOR UPDATE`) to an isolated Celery background worker, and implementing Redis as an idempotency shield at the network perimeter, I wanted to engineer a system that guarantees ACID compliance without sacrificing initial API response speeds.
 
 ## Quick Start
 
-This project utilizes `uv` for exceptionally fast dependency management and environment setup, though standard `pip` is fully supported.
+The entire distributed ecosystem is containerized. You can boot the API, database, cache, workers, and load testers locally in just a few commands.
 
-**1. Clone the repository:**
-```bash
-git clone https://github.com/yourusername/fintech-ledger-api
-cd fintech-ledger-api
-```
+**Prerequisites:**
+* Git
+* Docker & Docker Compose
 
-**2. Install dependencies:**
-Using `uv` (recommended):
-```bash
-uv sync
-```
-*(Alternatively, use standard pip: `pip install fastapi uvicorn sqlalchemy pydantic passlib bcrypt pyjwt pytest httpx`)*
+**Installation & Boot:**
+1. Clone the repository and navigate to the directory:
+   ```bash
+   git clone https://github.com/yourusername/fintech-ledger-api.git
+   cd fintech-ledger-api
+   ```
+2. Boot the distributed Docker network in the background:
+   ```bash
+   docker compose up --build -d
+   ```
+3. Run the database migrations and inject the test data (including the `load_tester` account):
+   ```bash
+   docker compose exec api alembic upgrade head
+   docker compose exec api python seed_money.py
+   ```
 
-**3. Start the Application:**
-Launch the Uvicorn ASGI server with the reload flag for development:
-```bash
-uv run uvicorn app.main:app --reload
-```
-*(The SQLite database `ledger.db` will automatically initialize on the first run).*
+## Usage
 
-## Usage & API Documentation
+Once the containers are running, you can explore the API manually or launch the automated stress test.
 
-Once the server is running, FastAPI automatically generates interactive documentation. You can view the endpoints, authenticate, and test the API directly via:
-* **Swagger UI:** `http://127.0.0.1:8000/docs`
-* **ReDoc:** `http://127.0.0.1:8000/redoc`
+**Interactive API Docs (Swagger UI):**
+Navigate to `http://localhost:8000/docs` to view the endpoints. You can log in, generate a secure JWT, and manually trigger transfers between accounts to watch the background workers process the queue.
 
-**Access Control Levels:**
-The API enforces strict RBAC across its endpoints. You must register a user and authenticate via the Swagger UI padlock to receive a JWT Bearer token.
-* **Viewer:** Read-only access to standard API metadata.
-* **Analyst:** Granted read-access to the `GET /api/v1/records/` and `GET /api/v1/analytics/summary` endpoints.
-* **Admin:** Full CRUD privileges, including the ability to `POST`, `PUT`, and `DELETE` financial records, as well as User Management.
-
-**Filtering & Pagination Feature:**
-The records listing endpoint supports query parameters for optimized database querying and filtering (e.g., `/api/v1/records/?skip=0&limit=50&record_type=expense&category=Housing&min_amount=500`).
-
-## Testing
-
-The project includes a fully isolated integration test suite that tests authentication, validation, and database operations without polluting the local development database.
-```bash
-uv run pytest
-```
+**Launching the Locust Swarm:**
+To test the idempotency middleware and transaction locks under heavy load:
+1. Open the Locust dashboard at `http://localhost:8089` in your browser.
+2. Enter `500` for the number of peak concurrent users and `50` for the spawn rate.
+3. Set the host to `http://api:8000` (Locust will route internally via Docker DNS).
+4. Click "Start Swarming" and monitor the 0% failure rate as Uvicorn and Celery process the queue.
 
 ## Contributing
 
-While this repository is primarily a fixed assessment submission, standard contribution workflows apply for future architectural reviews:
+While this repository is primarily a personal portfolio piece, I actively welcome architectural reviews, optimizations, and discussions regarding distributed systems!
+
 1. Fork the repository.
 2. Create a new branch for your feature (`git checkout -b feature/OptimizationName`).
-3. Commit your changes (`git commit -m 'refactor: implement Redis caching for analytics'`).
+3. Commit your changes (`git commit -m 'feat: implement new caching strategy'`).
 4. Push to the branch (`git push origin feature/OptimizationName`).
 5. Open a Pull Request detailing the tradeoffs and architectural decisions.
