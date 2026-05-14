@@ -42,8 +42,8 @@ The entire distributed ecosystem is containerized. You can boot the API, databas
 **Installation & Boot:**
 1. Clone the repository and navigate to the directory:
    ```bash
-   git clone https://github.com/yourusername/fintech-ledger-api.git
-   cd fintech-ledger-api
+   git clone https://github.com/Shreyansh15624/mutex-mint.git
+   cd mutex-mint
    ```
 2. Boot the distributed Docker network in the background:
    ```bash
